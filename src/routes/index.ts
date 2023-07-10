@@ -9,5 +9,6 @@ import recordRouter from "./record.routes";
 import userRouter from "./user.routes";
 import tariffRouter from "./tarrif.routes";
 import periodRouter from "./period.routes";
+import settingsRouter from "./settings.routes";
 
-export { autRouter, bankAccountRouter, baseRouter, tariffRouter, chargeRouter, customerRouter, paymentRouter, recordRouter, periodRouter, serviceRouter, userRouter };
+export { autRouter, bankAccountRouter, baseRouter, tariffRouter, chargeRouter, customerRouter, paymentRouter, recordRouter, periodRouter, serviceRouter, userRouter, settingsRouter };

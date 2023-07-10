@@ -1,5 +1,6 @@
-import { Request, Response } from "express";
+import e, { Request, Response } from "express";
 import { TariffTableModel } from "../models/tariffTable.model";
+import { Types } from "mongoose";
 
 const getTariffs = (req: Request, res: Response) => {
   TariffTableModel.find()
@@ -46,18 +47,48 @@ const createTarrifCicle = (req: Request, res: Response) => {
     });
 };
 
-const updateTarrif = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { tariffs } = req.body;
+interface TariffUpdate {
+  cycleId: string;
+  newTariff: string;
+  tariffId: string;
+  typeTariff: string;
+}
 
-  TariffTableModel.findOneAndUpdate({ _id: id }, { tariffs: tariffs }, { new: true })
-    .then((rs) => {
-      res.status(200).json(rs);
-    })
-    .catch((e) => {
-      console.error("Error al actualizar las tarifas:", e);
-      res.status(500).json({ error: "Error al actualizar las tarifas" });
-    });
+export const updateTariffs = async (req: Request, res: Response) => {
+  const updates: TariffUpdate[] = req.body;
+  const { cycleId } = req.params;
+  try {
+    let tariffTable = await TariffTableModel.findById(cycleId);
+
+    if (!tariffTable) {
+      return res.status(404).json({ message: "Tariff table not found" });
+    }
+
+    for (const update of updates) {
+      let subdocumentIndex = 0;
+
+      tariffTable.tariffs.forEach((tariff, i) => {
+        if (tariff._id?.toString() == update.tariffId) {
+          subdocumentIndex = i;
+        }
+      });
+
+      if (update.typeTariff == "domestic") {
+        tariffTable.tariffs[subdocumentIndex].domestic = new Types.Decimal128(update.newTariff);
+      }
+      if (update.typeTariff == "commercial") {
+        tariffTable.tariffs[subdocumentIndex].commercial = new Types.Decimal128(update.newTariff);
+      }
+      if (update.typeTariff == "mixed") {
+        tariffTable.tariffs[subdocumentIndex].mixed = new Types.Decimal128(update.newTariff);
+      }
+    }
+
+    await tariffTable.save();
+    return res.status(200).json({ message: "tariffs correctly updated" });
+  } catch (e: any) {
+    return res.status(400).json({ error: e.message });
+  }
 };
 
 export { createTarrifCicle, getTariffs };

@@ -37,7 +37,7 @@ const createPeriod = (req: Request, res: Response) => {
   period
     .save()
     .then(async (period) => {
-      await PeriodModel.updateMany({ _id: { $ne: period.id } }, { active: false });
+      await PeriodModel.updateMany({ _id: { $ne: period.id } }, { active: false, activePayments: false });
       res.status(201).json(period);
     })
     .catch((e) => {

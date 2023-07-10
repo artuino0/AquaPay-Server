@@ -30,8 +30,8 @@ const getService = (req: Request, res: Response) => {
 const createService = (req: Request, res: Response) => {
   const { customerId, meterNumber, serviceType, number, street, neighborhood, city, state } = req.body;
   const createdBy = req.uid;
-  if (!meterNumber || !customerId) {
-    return res.status(403).json({ error: 11001, message: "customerId or meterId are not empty" });
+  if (!customerId) {
+    return res.status(403).json({ error: 11001, message: "customerId can't be empty" });
   }
 
   const service = new ServiceModel({ customerId, meterNumber, serviceType, number, street, neighborhood, city, state, createdBy });
@@ -81,4 +81,24 @@ const disableService = (req: Request, res: Response) => {
     });
 };
 
-export { getServices, getService, createService, updateService, disableService };
+const getRecordsByService = (req: Request, res: Response) => {
+  ServiceModel.aggregate([
+    {
+      $lookup: {
+        from: "records", // Nombre de la colección de Record en MongoDB
+        localField: "_id",
+        foreignField: "serviceId",
+        as: "records",
+      },
+    },
+  ])
+    .exec()
+    .then((services) => {
+      console.log(services);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+};
+
+export { getServices, getService, createService, updateService, disableService, getRecordsByService };

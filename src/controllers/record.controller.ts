@@ -3,13 +3,30 @@ import { RecordModel } from "../models/record.model";
 import { ServiceModel } from "../models/service.model";
 
 const getRecords = async (req: Request, res: Response) => {
-  const records = await RecordModel.find().populate({ path: "createdBy", select: "name" }).populate("serviceId");
+  const records = await RecordModel.find()
+    .populate({ path: "createdBy", select: "name", populate: { path: "periodId" } })
+    .populate("serviceId");
   res.json(records);
+};
+
+const getRecordsByService = async (req: Request, res: Response) => {
+  const { serviceId } = req.params;
+  let id = serviceId;
+  ServiceModel.findById(id)
+    .populate({ path: "records", populate: { path: "periodId" } })
+    .populate({ path: "customerId" })
+    .then((rs) => {
+      if (!rs) return res.status(404).json({ error: "Service not found" });
+      res.json(rs);
+    })
+    .catch((e) => {
+      res.status(403).json(e);
+    });
 };
 
 const getRecord = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const record = await RecordModel.findById(id)
+  RecordModel.findById(id)
     .populate({ path: "createdBy", select: "name" })
     .populate("serviceId")
     .then((rs) => {
@@ -22,23 +39,31 @@ const getRecord = async (req: Request, res: Response) => {
 };
 
 const createRecord = async (req: Request, res: Response) => {
-  const { serviceId, previousReading, currentReading } = req.body;
+  const { serviceId, periodId, currentRecord } = req.body;
+
   const createdBy = req.uid;
 
-  try {
-    const service = await ServiceModel.findById(serviceId);
-    if (!service) return res.status(404).json({ error: "Service not found" });
+  const newRecord = new RecordModel({
+    serviceId,
+    createdBy,
+    periodId,
+    currentRecord,
+  });
 
-    const consumption = currentReading - previousReading;
-
-    const record = new RecordModel({ serviceId, createdBy, previousReading, currentReading, consumption });
-    const savedRecord = await record.save();
-
-    res.status(201).json(savedRecord);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
+  newRecord
+    .save()
+    .then((savedRecord) => {
+      // Actualizar el campo 'records' del servicio con el nuevo ID de registro
+      return ServiceModel.findByIdAndUpdate(serviceId, {
+        $push: { records: savedRecord._id },
+      });
+    })
+    .then(() => {
+      return res.status(201).json({ message: "Record created" });
+    })
+    .catch((error) => {
+      res.status(403).json(error);
+    });
 };
 
 const updateRecord = (req: Request, res: Response) => {
@@ -66,4 +91,20 @@ const disableRecord = (req: Request, res: Response) => {
     });
 };
 
-export { getRecords, getRecord, createRecord, updateRecord, disableRecord };
+const getLatestRecord = async (req: Request, res: Response) => {
+  const { serviceId, periodId } = req.params;
+
+  try {
+    const record = await RecordModel.findOne({ serviceId, periodId }).sort({ createdAt: -1 }).populate({ path: "createdBy", select: "name" }).exec();
+
+    if (!record) {
+      return res.status(404).json({ error: "Record not found" });
+    }
+
+    res.json(record);
+  } catch (error: any) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export { getRecords, getRecord, getRecordsByService, createRecord, updateRecord, disableRecord, getLatestRecord };

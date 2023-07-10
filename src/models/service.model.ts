@@ -7,8 +7,6 @@ const serviceSchema = new Schema({
   },
   meterNumber: {
     type: String,
-    unique: true,
-    require: true,
   },
   status: {
     type: Boolean,
@@ -39,10 +37,24 @@ const serviceSchema = new Schema({
     type: String,
     default: "Guanajuato",
   },
+  lastRead: {
+    type: Number,
+    default: 0,
+  },
+  previousDebt: {
+    type: Number,
+    default: 0,
+  },
   charges: [
     {
       type: Schema.Types.ObjectId,
       ref: "Charge",
+    },
+  ],
+  records: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Record",
     },
   ],
   createdBy: {

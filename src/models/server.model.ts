@@ -2,7 +2,7 @@ import express, { Application } from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import cors from "cors";
-import { autRouter, bankAccountRouter, baseRouter, chargeRouter, customerRouter, periodRouter, serviceRouter, tariffRouter, userRouter } from "../routes";
+import { autRouter, bankAccountRouter, baseRouter, chargeRouter, customerRouter, periodRouter, recordRouter, serviceRouter, settingsRouter, tariffRouter, userRouter } from "../routes";
 import databaseConn from "../database/mongo";
 
 dotenv.config();
@@ -26,6 +26,7 @@ class Server {
   middlewares() {
     this.app.use(cors());
     this.app.use(express.json());
+    this.app.use(express.static("public"));
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(morgan("dev"));
   }
@@ -40,6 +41,8 @@ class Server {
     this.app.use(`${this.basePath}/services`, serviceRouter);
     this.app.use(`${this.basePath}/tariffs`, tariffRouter);
     this.app.use(`${this.basePath}/periods`, periodRouter);
+    this.app.use(`${this.basePath}/records`, recordRouter);
+    this.app.use(`${this.basePath}/settings`, settingsRouter);
   }
 
   listen() {

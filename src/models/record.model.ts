@@ -3,32 +3,27 @@ import { Schema, model } from "mongoose";
 const recordSchema = new Schema(
   {
     serviceId: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "Service",
       required: true,
     },
     createdBy: {
       type: String,
       required: true,
     },
-    billingCycle: {
+    periodId: {
       type: Schema.Types.ObjectId,
-      ref: "BillingCycle",
-      required: true,
-    },
-    previousRecord: {
-      type: Number,
+      ref: "Period",
       required: true,
     },
     currentRecord: {
       type: Number,
       required: true,
     },
-    consumption: {
-      type: Number,
-      required: true,
-    },
   },
   { timestamps: true }
 );
+
+recordSchema.index({ periodId: 1, serviceId: 1 }, { unique: true });
 
 export const RecordModel = model("Record", recordSchema);

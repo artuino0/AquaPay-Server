@@ -1,4 +1,30 @@
-import mongoose, { Schema, Types, model } from "mongoose";
+import { Schema, model, Types } from "mongoose";
+
+const tariffSchema = new Schema({
+  consumption: {
+    type: Number,
+    required: true,
+  },
+  domestic: {
+    type: Schema.Types.Decimal128,
+    required: true,
+  },
+  commercial: {
+    type: Schema.Types.Decimal128,
+    required: true,
+  },
+  mixed: {
+    type: Schema.Types.Decimal128,
+    required: true,
+  },
+});
+
+tariffSchema.pre("save", function (next) {
+  if (!this._id) {
+    this._id = new Types.ObjectId();
+  }
+  next();
+});
 
 const tariffTableSchema = new Schema(
   {
@@ -7,28 +33,9 @@ const tariffTableSchema = new Schema(
       required: true,
       unique: true,
     },
-    tariffs: [
-      {
-        consumption: {
-          type: Number,
-          required: true,
-        },
-        domestic: {
-          type: Types.Decimal128,
-          required: true,
-        },
-        commercial: {
-          type: Types.Decimal128,
-          required: true,
-        },
-        mixed: {
-          type: Types.Decimal128,
-          required: true,
-        },
-      },
-    ],
+    tariffs: [tariffSchema],
     createdBy: {
-      type: Schema.Types.ObjectId,
+      type: Types.ObjectId,
       ref: "User",
       required: true,
     },
