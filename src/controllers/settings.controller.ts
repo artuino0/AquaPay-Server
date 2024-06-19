@@ -22,6 +22,7 @@ const saveSettings = async (req: Request, res: Response) => {
       settings.city_state = data.city_state;
       settings.phone = data.phone;
       settings.cellphone = data.cellphone;
+      settings.captureDays = JSON.parse(data.captureDays);
 
       if (image) {
         settings.imagen = "logo_company.png";
@@ -38,6 +39,7 @@ const saveSettings = async (req: Request, res: Response) => {
         phone: data.phone,
         cellphone: data.cellphone,
         imagen: image ? "logo_company.png" : null,
+        captureDays: data.captureDays,
       });
 
       await newData.save();
@@ -59,12 +61,39 @@ const saveSettings = async (req: Request, res: Response) => {
 const getSettings = (req: Request, res: Response) => {
   SettingsModel.findOne()
     .then((rs) => {
-      if (!rs) return res.status(404).json({ error: "Settings not found" });
+      if (!rs) {
+        return createSettings();
+      }
       res.json(rs);
     })
     .catch((e) => {
       res.status(403).json(e);
     });
+};
+
+const createSettings = async () => {
+  return new Promise((resolve, reject) => {
+    const settings = new SettingsModel({
+      companyName: "Nombre de la empresa",
+      address: "Dirección de la empresa",
+      downtown: "Centro",
+      postalCode: "123456",
+      city_state: "Ciudad, Estado",
+      phone: "1234567890",
+      cellphone: "0987654321",
+      imagen: null,
+      captureDays: [],
+    });
+
+    settings
+      .save()
+      .then((rs) => {
+        resolve(rs);
+      })
+      .catch((e) => {
+        reject(e);
+      });
+  });
 };
 
 export { upload, saveSettings, getSettings };

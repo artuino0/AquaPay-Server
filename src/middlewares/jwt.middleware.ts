@@ -19,7 +19,9 @@ const validateJWT = async (req: Request, res: Response, next: NextFunction) => {
     req.uid = decodedToken.uid;
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Authorization token is not valid" });
+    return res
+      .status(401)
+      .json({ message: "Authorization token is not valid" });
   }
 };
 

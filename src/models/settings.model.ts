@@ -12,6 +12,7 @@ const settingsSchema = new Schema({
   phone: { type: String, required: true },
   cellphone: { type: String, required: true },
   imagen: { type: String },
+  captureDays: { type: [Number], default: [] },
 });
 
 settingsSchema.methods.toJSON = function () {

@@ -1,4 +1,4 @@
-import autRouter from "./aut.routes";
+import authRouter from "./auth.routes";
 import bankAccountRouter from "./bankaccount.routes";
 import baseRouter from "./base.routes";
 import chargeRouter from "./charge.routes";
@@ -11,4 +11,17 @@ import tariffRouter from "./tarrif.routes";
 import periodRouter from "./period.routes";
 import settingsRouter from "./settings.routes";
 
-export { autRouter, bankAccountRouter, baseRouter, tariffRouter, chargeRouter, customerRouter, paymentRouter, recordRouter, periodRouter, serviceRouter, userRouter, settingsRouter };
+export {
+  authRouter,
+  bankAccountRouter,
+  baseRouter,
+  tariffRouter,
+  chargeRouter,
+  customerRouter,
+  paymentRouter,
+  recordRouter,
+  periodRouter,
+  serviceRouter,
+  userRouter,
+  settingsRouter,
+};
