@@ -1,3 +1,4 @@
+import { Router } from "express";
 import authRouter from "./auth.routes";
 import bankAccountRouter from "./bankaccount.routes";
 import baseRouter from "./base.routes";
@@ -11,17 +12,19 @@ import tariffRouter from "./tarrif.routes";
 import periodRouter from "./period.routes";
 import settingsRouter from "./settings.routes";
 
-export {
-  authRouter,
-  bankAccountRouter,
-  baseRouter,
-  tariffRouter,
-  chargeRouter,
-  customerRouter,
-  paymentRouter,
-  recordRouter,
-  periodRouter,
-  serviceRouter,
-  userRouter,
-  settingsRouter,
-};
+const routes = Router();
+
+routes.use("/", baseRouter);
+routes.use("/auth", authRouter);
+routes.use("/bank-accounts", bankAccountRouter);
+routes.use("/charges", chargeRouter);
+routes.use("/customers", customerRouter);
+routes.use("/payments", paymentRouter);
+routes.use("/services", serviceRouter);
+routes.use("/records", recordRouter);
+routes.use("/users", userRouter);
+routes.use("/tariffs", tariffRouter);
+routes.use("/records", periodRouter);
+routes.use("/settings", settingsRouter);
+
+export default routes;

@@ -15,6 +15,7 @@ const validateJWT = async (req: Request, res: Response, next: NextFunction) => {
   if (!token) return res.status(403).json({ error: "Token is required" });
 
   try {
+    token = token.split(" ")[1];
     const decodedToken = await verifyToken(token);
     req.uid = decodedToken.uid;
     next();
