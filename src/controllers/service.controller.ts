@@ -92,17 +92,19 @@ const getServices = async (req: Request, res: Response) => {
         .populate({ path: "createdBy", select: "name email periodId" })
         .populate({
           path: "customerId",
-          select: "externalContractId name lastName middleName",
+          select: "externalContractId name lastName middleName email",
         }),
     ]);
 
     const totalPages = Math.ceil(totalServices / limit);
-
-    res.json({
-      totalServices,
+    const pagination = {
+      total: totalServices,
       totalPages,
-      currentPage: page,
-      services,
+      totalNow: services.length,
+    };
+    res.json({
+      pagination,
+      data: services,
     });
   } catch (error: any) {
     res.status(500).json({ error: error.message });

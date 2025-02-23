@@ -20,11 +20,11 @@ routes.use("/bank-accounts", bankAccountRouter);
 routes.use("/charges", chargeRouter);
 routes.use("/customers", customerRouter);
 routes.use("/payments", paymentRouter);
-routes.use("/services", serviceRouter);
+routes.use("/periods", periodRouter);
 routes.use("/records", recordRouter);
-routes.use("/users", userRouter);
-routes.use("/tariffs", tariffRouter);
-routes.use("/records", periodRouter);
+routes.use("/services", serviceRouter);
 routes.use("/settings", settingsRouter);
+routes.use("/tariffs", tariffRouter);
+routes.use("/users", userRouter);
 
 export default routes;

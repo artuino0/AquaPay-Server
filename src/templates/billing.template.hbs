@@ -1,0 +1,298 @@
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recibo de Agua</title>
+    <style>
+      @page { size: landscape; } body { font-family: Arial, sans-serif; margin:
+      0; padding: 20px; display: flex; justify-content: center; gap: 20px; }
+      .receipt { width: 48%; max-width: 500px; padding: 15px; border: 1px solid
+      #ddd; box-sizing: border-box; } .header { display: flex; justify-content:
+      space-between; align-items: center; margin-bottom: 20px; } .logo { width:
+      250px; } .company-info { text-align: right; font-size: 12px; }
+      .receipt-title { text-align: left; font-weight: bold; margin: 10px 0; }
+      .customer-info { margin-bottom: 20px; } .info-container { display: flex;
+      justify-content: space-between; align-items: flex-start; margin-bottom:
+      20px; gap: 20px; } .customer-info { width: 60%; flex: 1; margin-bottom: 0;
+      } .readings-table { border: 3px solid #000; width: 100%; border-collapse:
+      collapse; margin-bottom: 20px; } .readings-table td { padding: 5px;
+      text-align: left; } .readings-table tr:nth-child(odd) { background-color:
+      #cfcfcf; } .contract-box { border: 3px solid #000; width: 100%;
+      border-collapse: collapse; margin-bottom: 20px; } .contract-box td {
+      padding: 2px; text-align: center; } .contract-box tr:nth-child(odd) {
+      background-color: #cfcfcf; } .readings-table { border: 2px solid #000; }
+      .charges-table { width: 100%; border-collapse: collapse; margin-bottom:
+      20px; } .charges-table th, .charges-table td { padding: 5px; text-align:
+      left; } .charges-table tr:nth-child(odd) { background-color: #cfcfcf; }
+      .charges-table { border: 2px solid #000; } .bank-info { margin-bottom:
+      20px; } .bank-accounts-table { width: 100%; border-collapse: collapse; }
+      .bank-accounts-table td:first-child { padding: 5px; text-align: center;
+      width: 50%; } .bank-accounts-table td:not(first-child) { padding: 30px;
+      text-align: center; width: 50%; } .bank-accounts-table tr:nth-child(odd) {
+      background-color: #cfcfcf; } .footer-message { text-align: center;
+      font-size: 12px; margin-top: 20px; }
+    </style>
+  </head>
+  <body>
+    <div class="receipt">
+      <div class="header">
+        <img src="{{logoPath}}" alt="DYDA" class="logo" />
+        <div class="company-info">
+          <span
+            style="text-transform: uppercase; font-size: 20px"
+          >{{companyName}}</span>
+          <br />
+          <span>{{companyAddress}}</span>
+          <br />
+          <span>{{companyNeighborhood}}</span>
+          <br />
+          <span>{{companyCityState}}</span>
+          <br />
+          <span>TEL. {{companyPhone}}</span>
+          <br />
+          <span>CEL. {{companyMobile}}</span>
+        </div>
+      </div>
+
+      <div class="receipt-title">RECIBO AGUA POTABLE</div>
+
+      <div class="info-container">
+        <div class="customer-info">
+          <span>{{customerName}}</span>
+          <br />
+          <span>{{customerStreet}}</span>
+          <br />
+          <span>{{customerAddress}}</span>
+          <br />
+          <span>Lote No. {{lotNumber}}</span>
+          <br />
+          <span>Medidor No. {{meterNumber}}</span>
+          <br />
+        </div>
+
+        <table
+          class="contract-box"
+          style="border: 4px solid #000; width: 40%; text-align: center"
+        >
+          <tr>
+            <td>Contrato</td>
+          </tr>
+          <tr>
+            <td>{{contractNumber}}</td>
+          </tr>
+          <tr>
+            <td>Total a pagar:</td>
+          </tr>
+          <tr>
+            <td>${{totalAmount}}</td>
+          </tr>
+          <tr>
+            <td>Fecha límite de pago:</td>
+          </tr>
+          <tr>
+            <td>{{dueDate}}</td>
+          </tr>
+        </table>
+      </div>
+
+      <table class="readings-table" style="border: 4px solid #000">
+        <tr>
+          <td>Lectura anterior</td>
+          <td style="text-align: right">{{previousReading}}</td>
+        </tr>
+        <tr>
+          <td>Lectura actual</td>
+          <td style="text-align: right">{{currentReading}}</td>
+        </tr>
+        <tr>
+          <td>Consumo</td>
+          <td style="text-align: right">{{consumption}}</td>
+        </tr>
+      </table>
+
+      <table class="charges-table" style="border: 4px solid #000">
+        <tr>
+          <th colspan="2">Concepto de cobro</th>
+        </tr>
+        <tr>
+          <td>Adeudo Anterior</td>
+          <td style="text-align: right">$ {{previousDebt}}</td>
+        </tr>
+        <tr>
+          <td>Su pago</td>
+          <td style="text-align: right">$ {{payment}}</td>
+        </tr>
+        <tr>
+          <td>Importe de consumo</td>
+          <td style="text-align: right">$ {{consumptionAmount}}</td>
+        </tr>
+        <tr>
+          <td>Cuota base</td>
+          <td style="text-align: right">$ {{baseRate}}</td>
+        </tr>
+        <tr>
+          <td>Recargos</td>
+          <td style="text-align: right">$ {{surcharges}}</td>
+        </tr>
+        <tr>
+          <td>Descuento</td>
+          <td style="text-align: right">$ {{discount}}</td>
+        </tr>
+        <tr>
+          <td colspan="2" style="text-align: right">
+            Total a pagar: ${{totalAmount}}
+          </td>
+        </tr>
+      </table>
+
+      <div class="bank-info" style="border: 3px solid #000">
+        <table class="bank-accounts-table">
+          <tr>
+            <td colspan="2"><strong>Cuentas bancarias</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Banco Santander</strong><br />{{santanderAccount}}</td>
+            <td><strong>Banco Banamex</strong><br />{{banamexAccount}}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="footer-message">
+        Queremos recordarle que su pago puntual del recibo de agua es
+        fundamental para poder continuar brindándole un servicio de calidad. Su
+        contribución nos permite mantener y mejorar nuestro sistema de
+        suministro para satisfacer sus necesidades.
+      </div>
+    </div>
+    <div class="receipt">
+      <div class="header">
+        <img src="{{logoPath}}" alt="DYDA" class="logo" />
+        <div class="company-info">
+          <span
+            style="text-transform: uppercase; font-size: 20px"
+          >{{companyName}}</span>
+          <br />
+          <span>{{companyAddress}}</span>
+          <br />
+          <span>{{companyNeighborhood}}</span>
+          <br />
+          <span>{{companyCityState}}</span>
+          <br />
+          <span>TEL. {{companyPhone}}</span>
+          <br />
+          <span>CEL. {{companyMobile}}</span>
+        </div>
+      </div>
+
+      <div class="receipt-title">RECIBO AGUA POTABLE</div>
+
+      <div class="info-container">
+        <div class="customer-info">
+          <span>{{customerName}}</span>
+          <br />
+          <span>{{customerStreet}}</span>
+          <br />
+          <span>{{customerAddress}}</span>
+          <br />
+          <span>Lote No. {{lotNumber}}</span>
+          <br />
+          <span>Medidor No. {{meterNumber}}</span>
+          <br />
+        </div>
+
+        <table
+          class="contract-box"
+          style="border: 4px solid #000; width: 40%; text-align: center"
+        >
+          <tr>
+            <td>Contrato</td>
+          </tr>
+          <tr>
+            <td>{{contractNumber}}</td>
+          </tr>
+          <tr>
+            <td>Total a pagar:</td>
+          </tr>
+          <tr>
+            <td>${{totalAmount}}</td>
+          </tr>
+          <tr>
+            <td>Fecha límite de pago:</td>
+          </tr>
+          <tr>
+            <td>{{dueDate}}</td>
+          </tr>
+        </table>
+      </div>
+
+      <table class="readings-table" style="border: 4px solid #000">
+        <tr>
+          <td>Lectura anterior</td>
+          <td style="text-align: right">{{previousReading}}</td>
+        </tr>
+        <tr>
+          <td>Lectura actual</td>
+          <td style="text-align: right">{{currentReading}}</td>
+        </tr>
+        <tr>
+          <td>Consumo</td>
+          <td style="text-align: right">{{consumption}}</td>
+        </tr>
+      </table>
+
+      <table class="charges-table" style="border: 4px solid #000">
+        <tr>
+          <th colspan="2">Concepto de cobro</th>
+        </tr>
+        <tr>
+          <td>Adeudo Anterior</td>
+          <td style="text-align: right">$ {{previousDebt}}</td>
+        </tr>
+        <tr>
+          <td>Su pago</td>
+          <td style="text-align: right">$ {{payment}}</td>
+        </tr>
+        <tr>
+          <td>Importe de consumo</td>
+          <td style="text-align: right">$ {{consumptionAmount}}</td>
+        </tr>
+        <tr>
+          <td>Cuota base</td>
+          <td style="text-align: right">$ {{baseRate}}</td>
+        </tr>
+        <tr>
+          <td>Recargos</td>
+          <td style="text-align: right">$ {{surcharges}}</td>
+        </tr>
+        <tr>
+          <td>Descuento</td>
+          <td style="text-align: right">$ {{discount}}</td>
+        </tr>
+        <tr>
+          <td colspan="2" style="text-align: right">
+            Total a pagar: ${{totalAmount}}
+          </td>
+        </tr>
+      </table>
+
+      <div class="bank-info" style="border: 3px solid #000">
+        <table class="bank-accounts-table">
+          <tr>
+            <td colspan="2"><strong>Cuentas bancarias</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Banco Santander</strong><br />{{santanderAccount}}</td>
+            <td><strong>Banco Banamex</strong><br />{{banamexAccount}}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="footer-message">
+        Queremos recordarle que su pago puntual del recibo de agua es
+        fundamental para poder continuar brindándole un servicio de calidad. Su
+        contribución nos permite mantener y mejorar nuestro sistema de
+        suministro para satisfacer sus necesidades.
+      </div>
+    </div>
+  </body>
+</html>

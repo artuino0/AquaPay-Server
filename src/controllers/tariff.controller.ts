@@ -1,17 +1,35 @@
-import e, { Request, Response } from "express";
+import { Request, Response } from "express";
 import { TariffTableModel } from "../models/tariffTable.model";
 import { Types } from "mongoose";
 
-const getTariffs = (req: Request, res: Response) => {
-  TariffTableModel.find()
-    .populate({ path: "createdBy", select: "name" })
-    .then((rs) => {
-      res.status(200).json(rs);
-    })
-    .catch((err) => {
-      res.status(500).json({ message: "Error checking if a tariff table exists", err });
-      return;
+const getTariffs = async (req: Request, res: Response) => {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 10;
+  const skip = (page - 1) * limit;
+
+  try {
+    const [total, tariffs] = await Promise.all([
+      TariffTableModel.countDocuments(),
+      TariffTableModel.find()
+        .populate({ path: "createdBy", select: "name" })
+        .skip(skip)
+        .limit(limit)
+        .sort({ year: -1 }),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+
+    res.status(200).json({
+      data: tariffs,
+      pagination: {
+        total,
+        page,
+        totalPages,
+      },
     });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching tariffs", err });
+  }
 };
 
 const createTarrifCicle = (req: Request, res: Response) => {
@@ -21,7 +39,9 @@ const createTarrifCicle = (req: Request, res: Response) => {
   const tariffs = [];
 
   if (!year || !maxConsuption) {
-    res.status(400).json({ message: "Values {maxConsumtion - year} not provided" });
+    res
+      .status(400)
+      .json({ message: "Values {maxConsumtion - year} not provided" });
     return;
   }
 
@@ -42,7 +62,9 @@ const createTarrifCicle = (req: Request, res: Response) => {
       res.status(201).json(rs);
     })
     .catch((err) => {
-      res.status(500).json({ message: "Error checking if a tariff table exists", err });
+      res
+        .status(500)
+        .json({ message: "Error checking if a tariff table exists", err });
       return;
     });
 };
@@ -54,7 +76,7 @@ interface TariffUpdate {
   typeTariff: string;
 }
 
-export const updateTariffs = async (req: Request, res: Response) => {
+const updateTariffs = async (req: Request, res: Response) => {
   const updates: TariffUpdate[] = req.body;
   const { cycleId } = req.params;
   try {
@@ -74,13 +96,19 @@ export const updateTariffs = async (req: Request, res: Response) => {
       });
 
       if (update.typeTariff == "domestic") {
-        tariffTable.tariffs[subdocumentIndex].domestic = new Types.Decimal128(update.newTariff);
+        tariffTable.tariffs[subdocumentIndex].domestic = new Types.Decimal128(
+          update.newTariff
+        );
       }
       if (update.typeTariff == "commercial") {
-        tariffTable.tariffs[subdocumentIndex].commercial = new Types.Decimal128(update.newTariff);
+        tariffTable.tariffs[subdocumentIndex].commercial = new Types.Decimal128(
+          update.newTariff
+        );
       }
       if (update.typeTariff == "mixed") {
-        tariffTable.tariffs[subdocumentIndex].mixed = new Types.Decimal128(update.newTariff);
+        tariffTable.tariffs[subdocumentIndex].mixed = new Types.Decimal128(
+          update.newTariff
+        );
       }
     }
 
@@ -91,4 +119,24 @@ export const updateTariffs = async (req: Request, res: Response) => {
   }
 };
 
-export { createTarrifCicle, getTariffs };
+const activateTariff = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const tariffTable = await TariffTableModel.findById(id);
+
+    if (!tariffTable) {
+      return res.status(404).json({ message: "Tariff table not found" });
+    }
+
+    tariffTable.active = true;
+    await tariffTable.save();
+
+    return res
+      .status(200)
+      .json({ message: "Tariff table activated successfully" });
+  } catch (e: any) {
+    return res.status(400).json({ error: e.message });
+  }
+};
+
+export { createTarrifCicle, getTariffs, updateTariffs, activateTariff };

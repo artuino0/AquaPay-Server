@@ -2,16 +2,28 @@ import { Schema, model } from "mongoose";
 
 const PeriodSchema = new Schema(
   {
-    name: {
-      type: String,
-      required: true,
-    },
     year: {
       type: Number,
       required: true,
     },
     month: {
       type: Number,
+      required: true,
+    },
+    fecha_inicio: {
+      type: Date,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+    },
+    fecha_fin: {
+      type: Date,
+      required: true,
+    },
+    fecha_limite_pago: {
+      type: Date,
       required: true,
     },
     active: {

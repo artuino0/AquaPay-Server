@@ -27,30 +27,37 @@ const getPeriod = async (req: Request, res: Response) => {
     });
 };
 
-const createPeriod = (req: Request, res: Response) => {
-  const { year, month } = req.body;
-  console.log(monthSelector(month));
-  const name = `${monthSelector(month).toUpperCase()} ${year}`;
-  const createdBy = req.uid;
+const createPeriod = async (req: Request, res: Response) => {
+  try {
+    let data = req.body;
+    console.log(monthSelector(data.month));
+    data.name = `${monthSelector(data.month).toUpperCase()} ${data.year}`;
+    const createdBy = req.uid;
 
-  const period = new PeriodModel({ name, year, month, createdBy });
-  period
-    .save()
-    .then(async (period) => {
-      await PeriodModel.updateMany({ _id: { $ne: period.id } }, { active: false, activePayments: false });
-      res.status(201).json(period);
-    })
-    .catch((e) => {
-      console.error("Error creating period:", e);
-      res.status(500).json({ message: "Error creating period" });
+    await PeriodModel.updateMany({
+      $set: {
+        active: false,
+      },
     });
+
+    const period = new PeriodModel({ ...data, createdBy });
+    period.save();
+
+    res.status(200).json(period);
+  } catch (error) {
+    console.error("Error creating period:", error);
+  }
 };
 
 const updatePeriod = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { name, year, month } = req.body;
   try {
-    const period = await PeriodModel.findByIdAndUpdate(id, { name, year, month }, { new: true });
+    const period = await PeriodModel.findByIdAndUpdate(
+      id,
+      { name, year, month },
+      { new: true }
+    );
     res.status(200).json(period);
   } catch (error) {
     console.error("Error updating period:", error);
