@@ -27,6 +27,16 @@ const getPeriod = async (req: Request, res: Response) => {
     });
 };
 
+const getCurrentActivePeriod = async (req: Request, res: Response) => {
+  try {
+    const period = await getActivePeriod();
+    res.status(200).json(period);
+  } catch (error) {
+    console.error("Error getting active period:", error);
+    res.status(500).json({ message: "Error getting active period" });
+  }
+};
+
 const createPeriod = async (req: Request, res: Response) => {
   try {
     let data = req.body;
@@ -76,4 +86,16 @@ const deletePeriod = async (req: Request, res: Response) => {
   }
 };
 
-export { getPeriods, getPeriod, createPeriod, updatePeriod, deletePeriod };
+const getActivePeriod = () => {
+  return PeriodModel.findOne({ active: true }).lean();
+};
+
+export {
+  getPeriods,
+  getPeriod,
+  createPeriod,
+  updatePeriod,
+  deletePeriod,
+  getActivePeriod,
+  getCurrentActivePeriod,
+};

@@ -2,8 +2,11 @@ import { Request, Response } from "express";
 import { BankAccountModel } from "../models/bankaccount.model";
 
 const getBankAccounts = async (req: Request, res: Response) => {
-  const bankAccounts = await BankAccountModel.find().populate({ path: "createdBy", select: "name" });
-  res.json(bankAccounts);
+  const bankAccounts = await BankAccountModel.find().populate({
+    path: "createdBy",
+    select: "name",
+  });
+  res.json({ data: bankAccounts });
 };
 
 const getBankAccount = async (req: Request, res: Response) => {
@@ -25,7 +28,12 @@ const createBankAccount = (req: Request, res: Response) => {
 
   let uid = req.uid;
 
-  const bankAccount = new BankAccountModel({ name, clabe, accountNumber, createdBy: uid });
+  const bankAccount = new BankAccountModel({
+    name,
+    clabe,
+    accountNumber,
+    createdBy: uid,
+  });
   bankAccount
     .save()
     .then((rs) => {
@@ -40,7 +48,11 @@ const updateBankAccount = (req: Request, res: Response) => {
   const { id } = req.params;
   const { name, clabe, accountNumber } = req.body;
 
-  BankAccountModel.findByIdAndUpdate({ _id: id }, { name, clabe, accountNumber }, { new: true })
+  BankAccountModel.findByIdAndUpdate(
+    { _id: id },
+    { name, clabe, accountNumber },
+    { new: true }
+  )
     .then((rs) => {
       if (!rs) return res.status(404).json({ error: "Bank account not found" });
       res.status(201).json(rs);
@@ -61,4 +73,10 @@ const deleteBankAccount = (req: Request, res: Response) => {
     });
 };
 
-export { getBankAccounts, getBankAccount, createBankAccount, updateBankAccount, deleteBankAccount };
+export {
+  getBankAccounts,
+  getBankAccount,
+  createBankAccount,
+  updateBankAccount,
+  deleteBankAccount,
+};

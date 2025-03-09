@@ -73,7 +73,7 @@ const getServices = async (req: Request, res: Response) => {
     }
 
     const isMobile = filters.mobile === "true";
-    const isHideMeterless = filters.isHideMeterless === "true";
+    const isHideMeterless = filters.meterless === "true" ? true : false;
 
     if (isMobile || isHideMeterless) {
       $and.push({ meterNumber: { $exists: true, $ne: "" } });
@@ -87,24 +87,53 @@ const getServices = async (req: Request, res: Response) => {
         .skip(skip)
         .limit(limit)
         .select(
-          "createdBy customerId serviceType meterNumber street number neighborhood city state createdAt"
+          "createdBy customerId serviceType meterNumber street number neighborhood city state records createdAt"
         ) // Projection
         .populate({ path: "createdBy", select: "name email periodId" })
         .populate({
           path: "customerId",
           select: "externalContractId name lastName middleName email",
+        })
+        .populate({
+          path: "records",
+          select: "currentRecord periodId createdAt",
+          options: {
+            sort: { createdAt: -1 },
+            limit: 1,
+          },
+          populate: {
+            path: "periodId",
+            select: "name fecha_inicio fecha_fin",
+            model: "Period",
+          },
         }),
     ]);
+
+    const processedServices = services.map((service: any) => {
+      const serviceObj = service.toObject();
+
+      const lastRecord =
+        serviceObj.records.length > 0
+          ? {
+              period: serviceObj.records[0].periodId,
+              currentRecord: serviceObj.records[0].currentRecord,
+              createdAt: serviceObj.records[0].createdAt,
+            }
+          : null;
+
+      const { records, ...rest } = serviceObj;
+      return { ...rest, lastRecord };
+    });
 
     const totalPages = Math.ceil(totalServices / limit);
     const pagination = {
       total: totalServices,
       totalPages,
-      totalNow: services.length,
+      totalNow: processedServices.length,
     };
     res.json({
       pagination,
-      data: services,
+      data: processedServices,
     });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
