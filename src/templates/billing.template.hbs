@@ -4,33 +4,130 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Recibo de Agua</title>
     <style>
-      @page { size: landscape; } body { font-family: Arial, sans-serif; margin:
-      0; padding: 20px; display: flex; justify-content: center; gap: 20px; }
-      .receipt { width: 48%; max-width: 500px; padding: 15px; border: 1px solid
-      #ddd; box-sizing: border-box; } .header { display: flex; justify-content:
-      space-between; align-items: center; margin-bottom: 20px; } .logo { width:
-      250px; } .company-info { text-align: right; font-size: 12px; }
-      .receipt-title { text-align: left; font-weight: bold; margin: 10px 0; }
-      .customer-info { margin-bottom: 20px; } .info-container { display: flex;
-      justify-content: space-between; align-items: flex-start; margin-bottom:
-      20px; gap: 20px; } .customer-info { width: 60%; flex: 1; margin-bottom: 0;
-      } .readings-table { border: 3px solid #000; width: 100%; border-collapse:
-      collapse; margin-bottom: 20px; } .readings-table td { padding: 5px;
-      text-align: left; } .readings-table tr:nth-child(odd) { background-color:
-      #cfcfcf; } .contract-box { border: 3px solid #000; width: 100%;
-      border-collapse: collapse; margin-bottom: 20px; } .contract-box td {
-      padding: 2px; text-align: center; } .contract-box tr:nth-child(odd) {
-      background-color: #cfcfcf; } .readings-table { border: 2px solid #000; }
-      .charges-table { width: 100%; border-collapse: collapse; margin-bottom:
-      20px; } .charges-table th, .charges-table td { padding: 5px; text-align:
-      left; } .charges-table tr:nth-child(odd) { background-color: #cfcfcf; }
-      .charges-table { border: 2px solid #000; } .bank-info { margin-bottom:
-      20px; } .bank-accounts-table { width: 100%; border-collapse: collapse; }
-      .bank-accounts-table td:first-child { padding: 5px; text-align: center;
-      width: 50%; } .bank-accounts-table td:not(first-child) { padding: 30px;
-      text-align: center; width: 50%; } .bank-accounts-table tr:nth-child(odd) {
-      background-color: #cfcfcf; } .footer-message { text-align: center;
-      font-size: 12px; margin-top: 20px; }
+      <style>
+      @page {
+        size: landscape;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+      }
+      .receipt {
+        width: 48%;
+        max-width: 500px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        box-sizing: border-box;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .logo {
+        width: 250px;
+      }
+      .company-info {
+        text-align: right;
+        font-size: 12px;
+      }
+      .receipt-title {
+        text-align: left;
+        font-weight: bold;
+        margin: 10px 0;
+      }
+      .customer-info {
+        margin-bottom: 20px;
+      }
+      .info-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+        gap: 20px;
+      }
+      .customer-info {
+        width: 60%;
+        flex: 1;
+        margin-bottom: 0;
+      }
+      .readings-table {
+        border: 3px solid #000;
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      .readings-table td {
+        padding: 5px;
+        text-align: left;
+      }
+      .readings-table tr:nth-child(odd) {
+        background-color: #cfcfcf;
+      }
+      .contract-box {
+        border: 3px solid #000;
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      .contract-box td {
+        padding: 2px;
+        text-align: center;
+      }
+      .contract-box tr:nth-child(odd) {
+        background-color: #cfcfcf;
+      }
+      .readings-table {
+        border: 2px solid #000;
+      }
+      .charges-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        font-size: 14px;
+      }
+      .charges-table th,
+      .charges-table td {
+        padding: 5px;
+        text-align: left;
+      }
+      .charges-table tr:nth-child(odd) {
+        background-color: #cfcfcf;
+      }
+      .charges-table {
+        border: 2px solid #000;
+      }
+      .bank-info {
+        margin-bottom: 20px;
+      }
+      .bank-accounts-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .bank-accounts-table td:first-child {
+        padding: 5px;
+        text-align: center;
+        width: 50%;
+      }
+      .bank-accounts-table td:not(first-child) {
+        padding: 30px;
+        text-align: center;
+        width: 50%;
+      }
+      .bank-accounts-table tr:nth-child(odd) {
+        background-color: #cfcfcf;
+      }
+      .footer-message {
+        text-align: center;
+        font-size: 12px;
+        margin-top: 20px;
+      }
     </style>
   </head>
   <body>

@@ -43,10 +43,7 @@
       .receipt-title {
         text-align: left;
         font-weight: bold;
-        margin: 10px 0;
-      }
-      .customer-info {
-        margin-bottom: 20px;
+        margin: 5px 0;
       }
       .info-container {
         display: flex;
@@ -55,7 +52,10 @@
         gap: 20px;
       }
       .customer-info {
-        width: 60%;
+        margin-bottom: 10px;
+      }
+
+      .customer-info {
         flex: 1;
         margin-bottom: 0;
       }
@@ -63,7 +63,7 @@
         border: 3px solid #000;
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
       }
       .readings-table td {
         padding: 5px;
@@ -77,7 +77,7 @@
         border: 3px solid #000;
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
       }
       .contract-box td {
         padding: 2px;
@@ -92,7 +92,7 @@
       .charges-table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
       }
       .charges-table th,
       .charges-table td {
@@ -106,7 +106,7 @@
         border: 2px solid #000;
       }
       .bank-info {
-        margin-bottom: 20px;
+        margin-bottom: 10px;
       }
       .bank-accounts-table {
         width: 100%;
@@ -136,7 +136,7 @@
     {{#each customers}}
     <div class="receipt">
       <div class="header">
-        <img src="{{../logoPath}}" alt="logo" class="logo" />
+        <img src="{{../logoBase64}}" alt="logo" class="logo" />
         <div class="company-info">
           <span style="text-transform: uppercase; font-size: 14px"
             >{{../companyName}}</span
@@ -150,15 +150,16 @@
         </div>
       </div>
 
-      <div class="receipt-title">RECIBO AGUA POTABLE</div>
-
       <div class="info-container">
-        <div class="customer-info">
-          <span>{{customerName}}</span> <br />
-          <span>{{customerStreet}}</span> <br />
-          <span>{{customerAddress}}</span> <br />
-          <span>Lote No. {{lotNumber}}</span> <br />
-          <span>Medidor No. {{meterNumber}}</span> <br />
+        <div>
+          <div class="receipt-title">RECIBO AGUA POTABLE</div>
+          <div class="customer-info">
+            <span>{{customerName}}</span> <br />
+            <span>{{customerStreet}} #{{customerAddress}}</span> <br />
+            <span>Lote No. {{lotNumber}}</span> <br />
+            <span>Medidor No. {{meterNumber}}</span>
+            <br />
+          </div>
         </div>
 
         <table
@@ -218,10 +219,6 @@
           <td style="text-align: right">$ {{consumptionAmount}}</td>
         </tr>
         <tr>
-          <td>Cuota base</td>
-          <td style="text-align: right">$ {{baseRate}}</td>
-        </tr>
-        <tr>
           <td>Recargos</td>
           <td style="text-align: right">$ {{surcharges}}</td>
         </tr>
@@ -229,6 +226,12 @@
           <td>Descuento</td>
           <td style="text-align: right">$ {{discount}}</td>
         </tr>
+        {{#each charges}}
+        <tr>
+          <td>{{name}}</td>
+          <td style="text-align: right">$ {{amount}}</td>
+        </tr>
+        {{/each}}
         <tr>
           <td colspan="2" style="text-align: right">
             Total a pagar: ${{totalAmount}}
@@ -242,10 +245,12 @@
             <td colspan="2"><strong>Cuentas bancarias</strong></td>
           </tr>
           <tr>
+            {{#each ../bankAccounts}}
             <td>
-              <strong>Banco Santander</strong><br />{{../santanderAccount}}
+              <strong>{{name}}</strong><br />CUENTA: {{cuenta}}<br />CLABE:
+              {{clabe}}
             </td>
-            <td><strong>Banco Banamex</strong><br />{{../banamexAccount}}</td>
+            {{/each}}
           </tr>
         </table>
       </div>

@@ -4,7 +4,7 @@
   "description": "AquaPay Server",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "ts-node src/test/billing.test.ts",
     "dev": "nodemon index.ts && tsc --watch"
   },
   "keywords": [
@@ -26,6 +26,7 @@
     "mysql2": "^3.4.4",
     "react-currency-input-field": "^3.6.10",
     "sequelize": "^6.32.1",
+    "stripe": "^17.7.0",
     "tesseract.js": "^4.0.3"
   },
   "devDependencies": {

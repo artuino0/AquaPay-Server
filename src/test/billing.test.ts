@@ -6,9 +6,22 @@ import handlebars from "handlebars";
 async function testBillingTemplate() {
   try {
     // Sample data for testing with multiple customers
+    // Read and convert logo to base64
+    const logoPath = path.join(
+      __dirname,
+      "..",
+      "..",
+      "public",
+      "logo_company.png"
+    );
+    const logoBuffer = fs.readFileSync(logoPath);
+    const logoBase64 = `data:image/png;base64,${Buffer.from(
+      logoBuffer
+    ).toString("base64")}`;
+
     const sampleData = {
       // Shared company information
-      logoPath: "http://localhost:3030/logo_company.png",
+      logoBase64,
       companyName: "DYNAMIC DATA",
       companyAddress: "Calle Principal #123",
       companyNeighborhood: "Colonia Centro",
@@ -236,7 +249,7 @@ async function testBillingTemplate() {
     await page.setContent(html);
     await page.pdf({
       path: "billing-test.pdf",
-      format: "A4",
+      format: "letter",
       landscape: true,
       printBackground: true,
     });

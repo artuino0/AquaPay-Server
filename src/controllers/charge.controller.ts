@@ -2,8 +2,44 @@ import { Request, Response } from "express";
 import { ChargeModel } from "../models/charge.model";
 
 const getCharges = async (req: Request, res: Response) => {
-  const charges = await ChargeModel.find().populate({ path: "createdBy", select: "name" });
-  res.json(charges);
+  try {
+    const filters = req.query;
+    const page = parseInt(filters.page as string) || 1;
+    const limit = parseInt(filters.limit as string) || 10;
+    const skip = (page - 1) * limit;
+    let $and: any[] = [];
+
+    if (filters.keyword) {
+      const keyword = new RegExp(filters.keyword as string, "i");
+      $and.push({
+        $or: [{ name: { $regex: keyword } }, { amount: { $regex: keyword } }],
+      });
+    }
+
+    const query = $and.length > 0 ? { $and } : {};
+
+    const [total, charges] = await Promise.all([
+      ChargeModel.countDocuments(query),
+      ChargeModel.find(query)
+        .skip(skip)
+        .limit(limit)
+        .populate({ path: "createdBy", select: "name" }),
+    ]);
+
+    const totalPages = Math.ceil(total / limit);
+    const pagination = {
+      total,
+      totalPages,
+      totalNow: charges.length,
+    };
+
+    res.json({
+      pagination,
+      data: charges,
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
 };
 
 const getCharge = async (req: Request, res: Response) => {
@@ -20,11 +56,11 @@ const getCharge = async (req: Request, res: Response) => {
 };
 
 const createCharge = (req: Request, res: Response) => {
-  const { name, amount } = req.body;
+  const data = req.body;
 
   let uid = req.uid;
 
-  const charge = new ChargeModel({ name, amount, createdBy: uid });
+  const charge = new ChargeModel({ ...data, createdBy: uid });
   charge
     .save()
     .then((rs) => {
@@ -37,9 +73,9 @@ const createCharge = (req: Request, res: Response) => {
 
 const updateCharge = (req: Request, res: Response) => {
   const { id } = req.params;
-  const { name, amount } = req.body;
+  const data = req.body;
 
-  ChargeModel.findByIdAndUpdate({ _id: id }, { name, amount }, { new: true })
+  ChargeModel.findByIdAndUpdate({ _id: id }, { ...data }, { new: true })
     .then((rs) => {
       if (!rs) return res.status(404).json({ error: "Charge not found" });
       res.status(201).json(rs);

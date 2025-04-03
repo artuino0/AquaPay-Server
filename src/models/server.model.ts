@@ -4,6 +4,7 @@ import morgan from "morgan";
 import cors from "cors";
 import routerV1 from "../routes";
 import databaseConn from "../database/mongo";
+import paymentLinkRouter from "../routes/paymentlinks.routes";
 
 dotenv.config();
 
@@ -32,6 +33,8 @@ class Server {
   }
 
   routes() {
+    this.app.use("/redirect/paymentlink", paymentLinkRouter);
+    this.app.use("/webhook/stripe", paymentLinkRouter);
     this.app.use(this.basePath, routerV1);
   }
 

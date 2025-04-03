@@ -140,6 +140,37 @@ const getServices = async (req: Request, res: Response) => {
   }
 };
 
+const getServicesByCustomer = async (req: Request, res: Response) => {
+  const customerId = req.params.id;
+  const filters = req.query;
+  const page = parseInt(filters.page as string) || 1;
+  const limit = parseInt(filters.limit as string) || 10;
+  const skip = (page - 1) * limit;
+
+  const [services, totalServices] = await Promise.all([
+    ServiceModel.find({ customerId })
+      .skip(skip)
+      .limit(limit)
+      .populate("createdBy")
+      .populate("customerId")
+      .populate({
+        path: "charges",
+        select: "name amount",
+      }),
+    ServiceModel.countDocuments({ customerId }),
+  ]);
+
+  const totalPages = Math.ceil(totalServices / limit);
+  const pagination = {
+    total: totalServices,
+    totalPages,
+  };
+  res.json({
+    pagination,
+    data: services,
+  });
+};
+
 const getService = (req: Request, res: Response) => {
   const { id } = req.params;
   ServiceModel.findById(id)
@@ -266,4 +297,5 @@ export {
   updateService,
   disableService,
   getRecordsByService,
+  getServicesByCustomer,
 };
